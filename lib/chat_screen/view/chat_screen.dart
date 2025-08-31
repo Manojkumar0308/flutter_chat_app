@@ -88,118 +88,116 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(title: Text('${widget.user.name}'),),
-        body: Column(
-          children: [
-            Expanded(
-              child: BlocBuilder<ChatBloc, ChatState>(
-                builder: (context, state) {
-                  if (state is ChatLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is ChatLoaded) {
-                    final messages = state.messages;
-                    if (messages.isEmpty) {
-                      return const Center(child: Text('No messages'));
-                    }
-                    return ListView.builder(
-                      controller: _scrollController,
-                      reverse: true, 
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        final msg = messages[messages.length - 1 - index];
-                        bool isMe = msg.sender == widget.loggedInUserId;
-                        return Align(
-                          alignment: isMe
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
-                            padding: const EdgeInsets.all(10.0),
-                            decoration: BoxDecoration(
-                              color: isMe
-                                  ? Colors.teal[600]
-                                  : Colors.grey[300],
-                              borderRadius: isMe
-                                  ? const BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                    )
-                                  : const BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10),
-                                      topLeft: Radius.circular(10),
-                                    ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  msg.content.toString(),
-                                  style: TextStyle(
-                                    color: isMe ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      _formatTime(msg.timestamp),
-                                      style: TextStyle(
-                                        color: isMe
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontSize: 10,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
+    return Scaffold(
+      appBar: AppBar(title: Text('${widget.user.name}'),),
+      body: Column(
+        children: [
+          Expanded(
+            child: BlocBuilder<ChatBloc, ChatState>(
+              builder: (context, state) {
+                if (state is ChatLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is ChatLoaded) {
+                  final messages = state.messages;
+                  if (messages.isEmpty) {
+                    return const Center(child: Text('No messages'));
                   }
-                  return const SizedBox.shrink();
-                },
-              ),
-            ),
-            
-            SafeArea(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        decoration: const InputDecoration(
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          hintText: 'Type a message...',
-                          border: OutlineInputBorder(),
+                  return ListView.builder(
+                    controller: _scrollController,
+                    reverse: true, 
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final msg = messages[messages.length - 1 - index];
+                      bool isMe = msg.sender == widget.loggedInUserId;
+                      return Align(
+                        alignment: isMe
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 4, horizontal: 8),
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            color: isMe
+                                ? Colors.teal[600]
+                                : Colors.grey[300],
+                            borderRadius: isMe
+                                ? const BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  )
+                                : const BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(10),
+                                    topLeft: Radius.circular(10),
+                                  ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                msg.content.toString(),
+                                style: TextStyle(
+                                  color: isMe ? Colors.white : Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    _formatTime(msg.timestamp),
+                                    style: TextStyle(
+                                      color: isMe
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                        onSubmitted: (_) => _sendMessage(),
+                      );
+                    },
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+          
+          SafeArea(
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: const InputDecoration(
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        hintText: 'Type a message...',
+                        border: OutlineInputBorder(),
                       ),
+                      onSubmitted: (_) => _sendMessage(),
                     ),
-                    const SizedBox(width: 6),
-                    IconButton(
-                      onPressed: _sendMessage,
-                      icon: const Icon(Icons.send, color: Colors.teal),
-                    )
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 6),
+                  IconButton(
+                    onPressed: _sendMessage,
+                    icon: const Icon(Icons.send, color: Colors.teal),
+                  )
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -39,18 +39,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         SocketService.sendMessage(
             event.senderId, event.receiverId, event.content);
 
-        // if (state is ChatLoaded) {
-        //   final currentMessages = (state as ChatLoaded).messages;
-        //   final newMessage = Message(
-        //     id: DateTime.now().millisecondsSinceEpoch.toString(),
-        //     sender: event.senderId,
-        //     receiver: event.receiverId,
-        //     content: event.content,
-        //     timestamp: DateTime.now(),
-        //     messageType: '',
-        //   );
-        //   emit(ChatLoaded(messages: [...currentMessages, newMessage]));
-        // }
+      
       } catch (e) {
         emit(ChatError(message: e.toString()));
       }

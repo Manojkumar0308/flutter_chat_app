@@ -34,12 +34,12 @@ class _ChatScreenState extends State<ChatScreen> {
         .read<ChatBloc>()
         .add(LoadMessages(widget.loggedInUserId, widget.user.id));
 
-    // SocketService.socket?.on('get-message', _handleIncomingMessage);
+   
   }
 
-// Listener handler
+
   void _handleIncomingMessage(dynamic data) {
-    if (!mounted) return; // avoid using context if widget is unmounted
+    if (!mounted) return; 
     final messageMap = Map<String, dynamic>.from(data);
     final message = Message.fromJson(messageMap);
     context.read<ChatBloc>().add(ReceiveMessageEvent(message));
@@ -169,14 +169,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         const SizedBox(
                                           width: 5,
                                         ),
-                                        // Text(
-                                        //   msg.messageType.toString(),
-                                        //   style: TextStyle(
-                                        //       color: isMe
-                                        //           ? Colors.white
-                                        //           : Colors.black,
-                                        //       fontSize: 10),
-                                        // ),
+                                       
                                       ],
                                     ),
                                   ],
@@ -188,7 +181,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       },
                     );
                   }
-                  // Default return if no state matches
+                  
                   return const SizedBox.shrink();
                 },
               ),

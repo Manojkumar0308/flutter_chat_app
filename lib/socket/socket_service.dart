@@ -15,12 +15,10 @@ class SocketService {
 
     socket?.on('login', (data) => print('Login event: $data'));
 
-    // Listen for messages
+    
     socket?.on('get-message', (data) {
       print('New message received: $data');
-      // Add to Bloc to update UI
-      // context.read<ChatBloc>().add(ReceiveMessageEvent(data));
-      // Note: pass context when initializing if needed
+     
     });
   }
 

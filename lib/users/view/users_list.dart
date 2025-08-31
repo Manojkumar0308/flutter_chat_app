@@ -76,7 +76,7 @@ class _UserScreenState extends State<UserScreen> {
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: Colors.grey.shade300, // हल्की लाइन नीचे
+                            color: Colors.grey.shade300, 
                             width: 1,
                           ),
                         ),

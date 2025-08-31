@@ -19,14 +19,14 @@ class Message {
   
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-    id: json['_id']?.toString() ?? '',          // fallback empty string
+    id: json['_id']?.toString() ?? '',         
     sender: json['sender']?.toString() ?? '',   
     receiver: json['receiver']?.toString() ?? '',
     content: json['content']?.toString() ?? '',
-    messageType: json['messageType']?.toString() ?? 'text', // default
+    messageType: json['messageType']?.toString() ?? 'text', 
     timestamp: json['timestamp'] != null
         ? DateTime.parse(json['timestamp'])
-        : DateTime.now(),                      // fallback
+        : DateTime.now(),                     
   );
   }
 

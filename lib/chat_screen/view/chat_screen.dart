@@ -62,9 +62,21 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _scrollToBottom() {
     if (!mounted || !_scrollController.hasClients) return;
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (!mounted || !_scrollController.hasClients) return;
-    _scrollController.jumpTo(_scrollController.position.minScrollExtent);
+  WidgetsBinding.instance.addPostFrameCallback((_)async {
+  if (!mounted || !_scrollController.hasClients) return;
+    final target = _scrollController.position.minScrollExtent;
+
+    try {
+      await _scrollController.animateTo(
+        target,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    } catch (e) {
+      debugPrint("Animation error (high refresh device): $e");
+     
+      _scrollController.jumpTo(target);
+    }
   });
   }
 

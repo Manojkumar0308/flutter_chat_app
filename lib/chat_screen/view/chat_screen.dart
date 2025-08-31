@@ -12,8 +12,12 @@ import '../model/chats_model.dart';
 class ChatScreen extends StatefulWidget {
   final Users user;
   final String loggedInUserId;
-  const ChatScreen(
-      {super.key, required this.user, required this.loggedInUserId});
+
+  const ChatScreen({
+    super.key,
+    required this.user,
+    required this.loggedInUserId,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -33,13 +37,10 @@ class _ChatScreenState extends State<ChatScreen> {
     context
         .read<ChatBloc>()
         .add(LoadMessages(widget.loggedInUserId, widget.user.id));
-
-   
   }
 
-
   void _handleIncomingMessage(dynamic data) {
-    if (!mounted) return; 
+    if (!mounted) return;
     final messageMap = Map<String, dynamic>.from(data);
     final message = Message.fromJson(messageMap);
     context.read<ChatBloc>().add(ReceiveMessageEvent(message));
@@ -48,8 +49,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _sendMessage() {
     if (_controller.text.trim().isEmpty) return;
-    context.read<ChatBloc>().add(SendMessageEvent(
-        widget.loggedInUserId, widget.user.id, _controller.text.trim()));
+    context.read<ChatBloc>().add(
+          SendMessageEvent(
+            widget.loggedInUserId,
+            widget.user.id,
+            _controller.text.trim(),
+          ),
+        );
     _controller.clear();
     _scrollToBottom();
   }
@@ -60,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (!mounted) return;
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
+          0.0, 
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -82,15 +88,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('${widget.user.name}')),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: Column(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(title: Text('${widget.user.name}'),),
+        body: Column(
           children: [
-            const SizedBox(
-              height: 20,
-            ),
             Expanded(
               child: BlocBuilder<ChatBloc, ChatState>(
                 builder: (context, state) {
@@ -103,105 +105,98 @@ class _ChatScreenState extends State<ChatScreen> {
                     }
                     return ListView.builder(
                       controller: _scrollController,
-                      itemCount: state.messages.length,
+                      reverse: true, 
+                      itemCount: messages.length,
                       itemBuilder: (context, index) {
-                        final msg = state.messages[index];
+                        final msg = messages[messages.length - 1 - index];
                         bool isMe = msg.sender == widget.loggedInUserId;
                         return Align(
                           alignment: isMe
                               ? Alignment.centerRight
                               : Alignment.centerLeft,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 8),
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                  color: isMe
-                                      ? Colors.teal[600]
-                                      : Colors.grey[300],
-                                  borderRadius: isMe
-                                      ? const BorderRadius.only(
-                                          bottomLeft: Radius.circular(10),
-                                          bottomRight: Radius.circular(10),
-                                          topRight: Radius.circular(10),
-                                        )
-                                      : const BorderRadius.only(
-                                          bottomLeft: Radius.circular(10),
-                                          bottomRight: Radius.circular(10),
-                                          topLeft: Radius.circular(10),
-                                        ),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            padding: const EdgeInsets.all(10.0),
+                            decoration: BoxDecoration(
+                              color: isMe
+                                  ? Colors.teal[600]
+                                  : Colors.grey[300],
+                              borderRadius: isMe
+                                  ? const BorderRadius.only(
+                                      bottomLeft: Radius.circular(10),
+                                      bottomRight: Radius.circular(10),
+                                      topRight: Radius.circular(10),
+                                    )
+                                  : const BorderRadius.only(
+                                      bottomLeft: Radius.circular(10),
+                                      bottomRight: Radius.circular(10),
+                                      topLeft: Radius.circular(10),
+                                    ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  msg.content.toString(),
+                                  style: TextStyle(
+                                    color: isMe ? Colors.white : Colors.black,
+                                  ),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                const SizedBox(height: 2),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      msg.content.toString(),
+                                      _formatTime(msg.timestamp),
                                       style: TextStyle(
-                                          color: isMe
-                                              ? Colors.white
-                                              : Colors.black),
-                                    ),
-                                    const SizedBox(
-                                      height: 2,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text(
-                                          _formatTime(msg.timestamp),
-                                          style: TextStyle(
-                                              color: isMe
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontSize: 10),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                       
-                                      ],
+                                        color: isMe
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontSize: 10,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },
                     );
                   }
-                  
                   return const SizedBox.shrink();
                 },
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      hintText: 'Type a message...',
+            
+            SafeArea(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _controller,
+                        decoration: const InputDecoration(
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          hintText: 'Type a message...',
+                          border: OutlineInputBorder(),
+                        ),
+                        onSubmitted: (_) => _sendMessage(),
+                      ),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
-                  ),
+                    const SizedBox(width: 6),
+                    IconButton(
+                      onPressed: _sendMessage,
+                      icon: const Icon(Icons.send, color: Colors.teal),
+                    )
+                  ],
                 ),
-                IconButton(
-                    onPressed: _sendMessage, icon: const Icon(Icons.send))
-              ],
+              ),
             ),
           ],
         ),

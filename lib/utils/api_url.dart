@@ -1,3 +1,3 @@
 class ApiUrl {
-  static const baseUrl = 'http://192.168.1.39:3000';
+  static const baseUrl = 'https://chat-app-node-18nq.onrender.com';
 }
